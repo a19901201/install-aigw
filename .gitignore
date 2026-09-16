@@ -1,3 +1,5 @@
 ﻿# 含敏感密鑰，僅留存本機不入庫
 MEMORY.md
 selftest.py
+update_route.py
+verify_route.py
