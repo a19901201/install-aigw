@@ -35,6 +35,8 @@ echo "=== 2. 建立 LiteLLM 安全透傳設定檔 ==="
 cat <<EOF > "${PROJECT_DIR}/config.yaml"
 model_list:
   # z-ai 系列模型固定路由至 OpenRouter 的 Z.AI 官方供應商（原生支援 Function Calling）
+  # 注意：z-ai/glm-5.3 在 OpenRouter 為純文字模型（text->text，35 個端點皆不支援圖片輸入），
+  # 含圖片請求務必改用 z-ai/glm-5.3-flash 或 z-ai/glm-5.3-flashx（原生多模態，已驗證圖片可通）。
   - model_name: "z-ai/*"
     litellm_params:
       model: "openrouter/z-ai/*"
