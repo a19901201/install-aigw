@@ -17,7 +17,41 @@ fi
 
 cat <<EOF > "${NEW_CFG}"
 model_list:
-  # z-ai 系列模型固定路由至 OpenRouter 的 Z.AI 官方供應商（原生支援 Function Calling）
+  # 具名模型必須明確列出，否則管理 UI 的 Models 下拉選單不會顯示
+  # （/v1/models 僅回傳具名 model_name，通配項 z-ai/* 與 * 會被排除）
+
+  # z-ai 旗艦版：固定路由至原廠 Z.AI（原生支援 Function Calling）
+  - model_name: "z-ai/glm-5.3"
+    litellm_params:
+      model: "openrouter/z-ai/glm-5.3"
+      api_key: "${OPENROUTER_KEY}"
+      extra_body:
+        provider:
+          order: ["z-ai"]
+          require_parameters: true
+
+  # glm-5.3-flash 開放 OpenRouter 最划算路由（第三方節點較便宜，多模態低成本版）
+  - model_name: "z-ai/glm-5.3-flash"
+    litellm_params:
+      model: "openrouter/z-ai/glm-5.3-flash"
+      api_key: "${OPENROUTER_KEY}"
+
+  # minimax M3.1 Flash 免費層
+  - model_name: "minimax/minimax-m3.1-flash:free"
+    litellm_params:
+      model: "openrouter/minimax/minimax-m3.1-flash:free"
+      api_key: "${OPENROUTER_KEY}"
+
+  # bge-m3 embedding 模型（轉發至 OpenRouter embeddings 端點，供 mem0.shutokou.cc 使用）
+  - model_name: "baai/bge-m3"
+    litellm_params:
+      model: "openai/baai/bge-m3"
+      api_base: "https://openrouter.ai/api/v1"
+      api_key: "${OPENROUTER_KEY}"
+      mode: embedding
+      input_cost_per_token: 0.00000001
+
+  # z-ai 系列其餘模型固定路由至原廠 Z.AI（原生支援 Function Calling）
   - model_name: "z-ai/*"
     litellm_params:
       model: "openrouter/z-ai/*"
@@ -36,6 +70,7 @@ model_list:
 general_settings:
   database_url: "postgresql://litellm:${DB_PASSWORD}@db:5432/litellm"
   master_key: "${MASTER_KEY}"
+  disable_env_credential_login: true
 
 litellm_settings:
   drop_params: True
@@ -47,7 +82,7 @@ chmod 600 "${NEW_CFG}"
 cp "${OLD_CFG}" "${OLD_CFG}.bak"
 mv "${NEW_CFG}" "${OLD_CFG}"
 
-cd "${PROJECT_DIR}"
-docker compose restart litellm
+# PROJECT_DIR 權限為 700 root，須以 root 身分在該目錄下執行 compose
+sudo docker compose -f "${PROJECT_DIR}/docker-compose.yml" restart litellm
 
 echo "CONFIG_UPDATED"

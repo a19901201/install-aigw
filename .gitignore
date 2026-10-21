@@ -2,4 +2,5 @@
 MEMORY.md
 selftest.py
 update_route.py
+update_models.py
 verify_route.py
