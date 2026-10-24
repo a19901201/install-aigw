@@ -52,12 +52,6 @@ model_list:
       model: "openrouter/z-ai/glm-5.3-flash"
       api_key: "${OPENROUTER_KEY}"
 
-  # minimax M3.1 Flash 免費層
-  - model_name: "minimax/minimax-m3.1-flash:free"
-    litellm_params:
-      model: "openrouter/minimax/minimax-m3.1-flash:free"
-      api_key: "${OPENROUTER_KEY}"
-
   # bge-m3 embedding 模型（轉發至 OpenRouter embeddings 端點，供 mem0.shutokou.cc 使用）
   - model_name: "baai/bge-m3"
     litellm_params:
@@ -166,7 +160,7 @@ echo "------------------------------------------------------------"
 
 TEST_KEY=""
 USERS=("Member_1" "Member_2" "Member_3" "Member_4" "Member_5")
-MEMBER_MODELS=("z-ai/glm-5.3-flash" "minimax/minimax-m3.1-flash:free")
+MEMBER_MODELS=("z-ai/glm-5.3-flash")
 MEMBER_MODEL="${MEMBER_MODELS[0]}"
 MODELS_JSON="$(printf '"%s",' "${MEMBER_MODELS[@]}")"
 MODELS_JSON="${MODELS_JSON%,}"

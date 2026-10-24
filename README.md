@@ -15,7 +15,6 @@ ai中轉站
 
 - `z-ai/glm-5.3`：固定路由至原廠 Z.AI，保留 `provider.order: ["z-ai"]` 釘選。
 - `z-ai/glm-5.3-flash`：走 OpenRouter 最划算路由。
-- `minimax/minimax-m3.1-flash:free`：免費層。
 - `baai/bge-m3`：embedding 模型，供 `mem0.shutokou.cc` 使用。
 
 新增或修改具名模型後，執行 `update_config.sh` 重新套用並重啟服務。

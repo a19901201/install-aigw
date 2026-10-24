@@ -4,3 +4,5 @@ selftest.py
 update_route.py
 update_models.py
 verify_route.py
+deny_test.sh
+__pycache__/
