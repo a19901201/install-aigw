@@ -6,3 +6,6 @@ update_models.py
 verify_route.py
 deny_test.sh
 __pycache__/
+add_deepseek_model.py
+update_keys.py
+keys_report.py
