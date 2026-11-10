@@ -9,3 +9,4 @@ __pycache__/
 add_deepseek_model.py
 update_keys.py
 keys_report.py
+check_glm_routing.py
