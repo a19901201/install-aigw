@@ -20,21 +20,24 @@ model_list:
   # 具名模型必須明確列出，否則管理 UI 的 Models 下拉選單不會顯示
   # （/v1/models 僅回傳具名 model_name，通配項 z-ai/* 與 * 會被排除）
 
-  # z-ai 旗艦版：固定路由至原廠 Z.AI（原生支援 Function Calling）
+  # z-ai 旗艦版：排除原廠 Z.AI 節點，改走第三方節點（保留 require_parameters 以維持工具呼叫）
   - model_name: "z-ai/glm-5.3"
     litellm_params:
       model: "openrouter/z-ai/glm-5.3"
       api_key: "${OPENROUTER_KEY}"
       extra_body:
         provider:
-          order: ["z-ai"]
+          ignore: ["z-ai"]
           require_parameters: true
 
-  # glm-5.3-flash 開放 OpenRouter 最划算路由（第三方節點較便宜，多模態低成本版）
+  # glm-5.3-flash：排除原廠 Z.AI 節點，走第三方節點（多模態低成本版）
   - model_name: "z-ai/glm-5.3-flash"
     litellm_params:
       model: "openrouter/z-ai/glm-5.3-flash"
       api_key: "${OPENROUTER_KEY}"
+      extra_body:
+        provider:
+          ignore: ["z-ai"]
 
   # bge-m3 embedding 模型（轉發至 OpenRouter embeddings 端點，供 mem0.shutokou.cc 使用）
   - model_name: "baai/bge-m3"
@@ -45,7 +48,38 @@ model_list:
       mode: embedding
       input_cost_per_token: 0.00000001
 
-  # z-ai 系列其餘模型固定路由至原廠 Z.AI（原生支援 Function Calling）
+  # deepseek V4.1 Flash（1017 版）：具名登錄，且排除原廠 DeepSeek 節點
+  - model_name: "deepseek/deepseek-v4.1-flash-1017"
+    litellm_params:
+      model: "openrouter/deepseek/deepseek-v4.1-flash-1017"
+      api_key: "${OPENROUTER_KEY}"
+      extra_body:
+        provider:
+          ignore: ["deepseek"]
+
+  # glm-5.2：排除原廠 Z.AI 節點，走第三方節點（保留 require_parameters 維持工具呼叫）
+  - model_name: "z-ai/glm-5.2"
+    litellm_params:
+      model: "openrouter/z-ai/glm-5.2"
+      api_key: "${OPENROUTER_KEY}"
+      extra_body:
+        provider:
+          ignore: ["z-ai"]
+          require_parameters: true
+
+  # gpt-5.6-luna：具名登錄供管理 UI 顯示（OpenRouter 最優路由）
+  - model_name: "openai/gpt-5.6-luna"
+    litellm_params:
+      model: "openrouter/openai/gpt-5.6-luna"
+      api_key: "${OPENROUTER_KEY}"
+
+  # claude-sonnet-4.6：具名登錄供管理 UI 顯示（OpenRouter 最優路由）
+  - model_name: "anthropic/claude-sonnet-4.6"
+    litellm_params:
+      model: "openrouter/anthropic/claude-sonnet-4.6"
+      api_key: "${OPENROUTER_KEY}"
+
+  # z-ai/* 通配模型維持固定路由至原廠 Z.AI（原生支援 Function Calling）
   - model_name: "z-ai/*"
     litellm_params:
       model: "openrouter/z-ai/*"
@@ -70,6 +104,9 @@ litellm_settings:
   drop_params: True
   telemetry: False
   send_spend_to_client: True
+  # 每日預算重置改依台北時間午夜，而非預設 UTC 午夜
+  timezone: "Asia/Taipei"
+  budget_reset_time: "00:00"
 EOF
 
 chmod 600 "${NEW_CFG}"
